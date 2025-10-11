@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // Используем ресурсы для определения количества колонок
         val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             resources.getInteger(R.integer.landscape_columns)
         } else {
