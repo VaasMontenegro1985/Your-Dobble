@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = GridLayoutManager(this, spanCount)
         recyclerView.adapter = adapter
-        recyclerView.setPadding(0, 0, 0, 0)
     }
 
     private fun setupClickListeners() {
