@@ -1,6 +1,5 @@
 package com.vasya.yourdobble.ui.screen.games
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.vasya.yourdobble.data.repository.WordsRepository
+import com.vasya.yourdobble.domain.generateCardsUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ class GameViewModel(
 
     fun getWords(): List<String> {
         return allWords
-    }// дальше твой код
+    }
 
     var score by mutableStateOf(0)
         private set
@@ -31,7 +31,7 @@ class GameViewModel(
     var isGameOver by mutableStateOf(false)
         private set
 
-    var cards by mutableStateOf(generateCards(allWords))
+    var cards by mutableStateOf(generateCardsUseCase(allWords))
         private set
 
     init {
@@ -62,7 +62,7 @@ class GameViewModel(
         val newLimit = maxOf(4, 10 - score / 10)
         timeLeft = newLimit
 
-        cards = generateCards(allWords)
+        cards = generateCardsUseCase(allWords)
     }
 
     fun onWrongClick() {
@@ -73,18 +73,7 @@ class GameViewModel(
         score = 0
         timeLeft = 10
         isGameOver = false
-        cards = generateCards(allWords)
+        cards = generateCardsUseCase(allWords)
     }
 }
 
-class GameViewModelFactory(
-    private val repository: WordsRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(GameViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return GameViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
