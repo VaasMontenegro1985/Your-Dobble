@@ -1,23 +1,37 @@
 package com.vasya.yourdobble.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.vasya.yourdobble.data.repository.ProgressRepository
 import com.vasya.yourdobble.data.repository.WordsRepository
 import com.vasya.yourdobble.ui.screen.ModeSelectScreen
 import com.vasya.yourdobble.ui.screen.StartScreen
 import com.vasya.yourdobble.ui.screen.games.EndlessGameScreen
-import com.vasya.yourdobble.ui.screen.games.GameViewModel
-import com.vasya.yourdobble.ui.screen.games.GameViewModelFactory
+import com.vasya.yourdobble.viewmodel.EndlessGameViewModel
+import com.vasya.yourdobble.ui.screen.games.TimerGameScreen
+import com.vasya.yourdobble.viewmodel.TimerGameViewModel
+import com.vasya.yourdobble.ui.screen.games.SprintGameScreen
+import com.vasya.yourdobble.viewmodel.SprintGameViewModel
+import com.vasya.yourdobble.viewmodel.factory.EndlessGameViewModelFactory
+import com.vasya.yourdobble.viewmodel.factory.TimerGameViewModelFactory
+import com.vasya.yourdobble.viewmodel.factory.SprintGameViewModelFactory
 
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
     val context = LocalContext.current
-    val repository = WordsRepository(context)
+    val wordsRepository = remember {
+        WordsRepository(context)
+    }
+
+    val progressRepository = remember {
+        ProgressRepository(context)
+    }
 
     NavHost(
         navController = navController,
@@ -25,8 +39,20 @@ fun AppNavigation(){
     ) {
         composable("start"){
             StartScreen(
-                onStartCLick = {
+                onSoloClick = {
                     navController.navigate("mode_select")
+                },
+                onLocalMultiClick = {
+                    navController.navigate("mode_select")
+                },
+                onOnlineMultiClick = {
+                    navController.navigate("mode_select")
+                },
+                onHowToPlayClick = {
+                    navController.navigate("rules")
+                },
+                onSettingsClick = {
+                    navController.navigate("settings")
                 }
             )
         }
@@ -46,8 +72,8 @@ fun AppNavigation(){
         }
 
         composable("endless"){
-            val factory = GameViewModelFactory(repository)
-            val viewModel: GameViewModel = viewModel(factory = factory)
+            val factory = EndlessGameViewModelFactory(wordsRepository, progressRepository)
+            val viewModel: EndlessGameViewModel = viewModel(factory = factory)
 
             EndlessGameScreen(
                 viewModel = viewModel,
@@ -60,10 +86,10 @@ fun AppNavigation(){
         }
 
         composable("timer"){
-            val factory = GameViewModelFactory(repository)
-            val viewModel: GameViewModel = viewModel(factory = factory)
+            val factory = TimerGameViewModelFactory(wordsRepository, progressRepository)
+            val viewModel: TimerGameViewModel = viewModel(factory = factory)
 
-            EndlessGameScreen(
+            TimerGameScreen(
                 viewModel = viewModel,
                 onRestartClick = {
                     navController.navigate("timer") {
@@ -74,10 +100,10 @@ fun AppNavigation(){
         }
 
         composable("sprint"){
-            val factory = GameViewModelFactory(repository)
-            val viewModel: GameViewModel = viewModel(factory = factory)
+            val factory = SprintGameViewModelFactory(wordsRepository, progressRepository)
+            val viewModel: SprintGameViewModel = viewModel(factory = factory)
 
-            EndlessGameScreen(
+            SprintGameScreen(
                 viewModel = viewModel,
                 onRestartClick = {
                     navController.navigate("sprint") {
@@ -89,6 +115,9 @@ fun AppNavigation(){
 
         composable("settings"){
             // SettingsScreen()
+        }
+        composable("settings"){
+            // Rules()
         }
     }
 }
